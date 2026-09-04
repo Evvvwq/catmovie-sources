@@ -3,9 +3,8 @@
     "id": "dm91-aimanju",
     "name": "91动漫·AI漫剧",
     "api": "https://91dongman.net",
-    "nsfw": false,
-    "logo": "https://91dongman.net/static/web/images/og.png",
-    "desc": "91动漫 AI漫剧 v5",
+    "nsfw": true,
+    "desc": "91动漫 AI漫剧 (v7 全局req+m3u8直链)",
     "type": 1,
     "extra": {
       "gfw": false,
@@ -15,11 +14,23 @@
           {
             "text": "AI漫剧",
             "id": "ai"
+          },
+          {
+            "text": "里番动漫",
+            "id": "lifan"
+          },
+          {
+            "text": "3D动漫",
+            "id": "3d"
+          },
+          {
+            "text": "泡面番",
+            "id": "paomian"
           }
         ],
-        "home": "const cate=env.get(\"category\");const page=env.get(\"page\");const p=Number(page||1);const url=p<=1?(env.baseUrl+\"/anime/ai/\"):(env.baseUrl+\"/anime/ai/page/\"+p+\"/\");const html=await(0,utils_1.req)(url);const out=[];const seen={};const re=/<a[^>]*href=\"(\\/anime\\/ai\\/(\\d+)\\/)\"[^>]*>([\\s\\S]*?)<\\/a>/g;let m;while((m=re.exec(html))&&out.length<50){const id=m[2];if(seen[id])continue;seen[id]=1;const inner=m[3];const cm=inner.match(/data-src=\"([^\"]*)\"/)||inner.match(/src=\"([^\"]*upload[^\"]*)\"/);const cover=cm?cm[1]:\"\";const am=inner.match(/alt=\"([^\"]*)\"/);let title=am?am[1]:\"\";if(!title)title=inner.replace(/<[^>]+>/g,\" \").trim();if(title&&title.length>1){out.push({id:\"/anime/ai/\"+id+\"/\",title,cover,remark:\"AI漫剧\"})}}return out",
-        "detail": "let id=env.get(\"movieId\");if(!id)return{id:\"\",title:\"\",cover:\"\",playlist:[]};const idm=String(id).match(/(\\d+)/);if(idm)id=idm[1];const jsonStr=await(0,utils_1.req)(env.baseUrl+\"/api/dm/anime/\"+id+\"/\");const data=JSON.parse(jsonStr).data;const eps=(data.episodes||[]).map(ep=>{const n=ep.sort_no||((ep.index||0)+1)||1;const label=ep.label||(\"EP\"+String(n).padStart(2,\"0\"));const t=ep.title?(\" \"+ep.title):\"\";return{text:label+t,id:env.baseUrl+\"/api/dm/anime/\"+id+\"/episodes/\"+n+\"/stream\"}});if(!eps.length){eps.push({text:\"EP01\",id:env.baseUrl+\"/api/dm/anime/\"+id+\"/episodes/1/stream\"})}return{id:\"/anime/ai/\"+id+\"/\",title:data.title||\"\",cover:data.cover||\"\",remark:\"AI漫剧\",desc:data.intro||\"\",playlist:[{title:\"默认线路\",videos:eps}]}",
-        "search": "const wd=env.get(\"keyword\");if(!wd)return[];const html=await(0,utils_1.req)(env.baseUrl+\"/search-result/\"+encodeURIComponent(wd)+\"/\");const out=[];const seen={};const re=/<a[^>]*href=\"(\\/anime\\/ai\\/(\\d+)\\/)\"[^>]*>([\\s\\S]*?)<\\/a>/g;let m;while((m=re.exec(html))&&out.length<30){const id=m[2];if(seen[id])continue;seen[id]=1;const inner=m[3];const cm=inner.match(/data-src=\"([^\"]*)\"/)||inner.match(/src=\"([^\"]*upload[^\"]*)\"/);const cover=cm?cm[1]:\"\";const am=inner.match(/alt=\"([^\"]*)\"/);let title=am?am[1]:\"\";if(!title)title=inner.replace(/<[^>]+>/g,\" \").trim();if(title&&title.length>1){out.push({id:\"/anime/ai/\"+id+\"/\",title,cover,remark:\"AI漫剧\"})}}return out"
+        "home": "const cate = env.get(\"category\", \"\");const page = Number(env.get(\"page\", 1) || 1);const p = page || 1;const cat = cate || \"ai\";const listUrl = p <= 1 ? (env.baseUrl + \"/anime/\" + cat + \"/\") : (env.baseUrl + \"/anime/\" + cat + \"/page/\" + p + \"/\");const html = await req(listUrl);const $ = kitty.load(html);const out = [];$(\"a\").each(function () {const $a = $(this);const href = $a.attr(\"href\") || \"\";const m = href.match(/\\/anime\\/(?:ai|lifan|3d|paomian)\\/(\\d+)\\//);if (m && out.length < 50) {const id = m[1];const img = $a.find(\"img\").first();let cover = img.attr(\"data-src\") || img.attr(\"src\") || \"\";if (cover && cover.includes(\"placeholder\")) cover = \"\";let title = img.attr(\"alt\") || $a.attr(\"title\") || \"\";if (!title) title = $a.text().replace(/\\s+/g, \" \").trim();const key = \"/anime/ai/\" + id + \"/\";if (title && title.length > 1 && !out.some(x => x.id === key)) {out.push({ id: key, title, cover, remark: \"AI漫剧\" });}}});if (!cate) {return { type: \"complex\", data: [{ type: \"card\", title: \"AI漫剧\", videos: out }] };}return out;",
+        "detail": "let id = env.get(\"movieId\", \"\");if (!id) return { id: \"\", title: \"\", cover: \"\", playlist: [] };const m = String(id).match(/(\\d+)/);if (m) id = m[1];const jsonStr = await req(env.baseUrl + \"/api/dm/anime/\" + id + \"/\");const data = JSON.parse(jsonStr).data;const eps = (data.episodes || []).map(ep => {const n = ep.sort_no || ((ep.index || 0) + 1) || 1;const label = ep.label || (\"EP\" + String(n).padStart(2, \"0\"));const t = ep.title && ep.title !== label ? (\" \" + ep.title) : \"\";return { text: label + t, url: env.baseUrl + \"/api/dm/anime/\" + id + \"/episodes/\" + n + \"/stream\" };});if (!eps.length) {eps.push({ text: \"EP01\", url: env.baseUrl + \"/api/dm/anime/\" + id + \"/episodes/1/stream\" });}return { id: \"/anime/ai/\" + id + \"/\", title: data.title || \"\", cover: data.cover || \"\", remark: \"AI漫剧\", desc: data.intro || \"\", playlist: [{ title: \"播放线路\", videos: eps }] };",
+        "search": "const wd = env.get(\"keyword\", \"\");if (!wd) return [];const html = await req(env.baseUrl + \"/search-result/\" + encodeURIComponent(wd) + \"/\");const $ = kitty.load(html);const out = [];$(\"a\").each(function () {const $a = $(this);const href = $a.attr(\"href\") || \"\";const m = href.match(/\\/anime\\/ai\\/(\\d+)\\//);if (m && out.length < 30) {const id = m[1];const img = $a.find(\"img\").first();let cover = img.attr(\"data-src\") || img.attr(\"src\") || \"\";if (cover && cover.includes(\"placeholder\")) cover = \"\";let title = img.attr(\"alt\") || $a.attr(\"title\") || \"\";if (!title) title = $a.text().replace(/\\s+/g, \" \").trim();const key = \"/anime/ai/\" + id + \"/\";if (title && title.length > 1 && !out.some(x => x.id === key)) {out.push({ id: key, title, cover, remark: \"AI漫剧\" });}}});return out;"
       }
     }
   }
