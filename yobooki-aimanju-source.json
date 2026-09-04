@@ -1,0 +1,29 @@
+[
+  {
+    "id": "yobooki-aimanju",
+    "name": "星辰影院·AI漫剧",
+    "api": "https://www.yobooki.com",
+    "nsfw": false,
+    "desc": "星辰影院 AI漫剧 正经源",
+    "type": 1,
+    "extra": {
+      "gfw": false,
+      "searchLimit": 20,
+      "js": {
+        "category": [
+          {
+            "text": "AI漫剧",
+            "id": "47"
+          },
+          {
+            "text": "首页",
+            "id": "/"
+          }
+        ],
+        "home": "const cate=env.get(\"category\");const page=env.get(\"page\");const p=Number(page||1);const base=env.baseUrl;const isHome=cate==\"/\"||!cate;const listUrl=p<=1?(base+\"/tv/47.html\"):(base+\"/tv/47/page/\"+p+\".html\");const html=await(0,utils_1.req)(listUrl);const $=utils_1.kitty.load(html);const items=[];$(\"a\").each(function(){const $a=$(this);const href=$a.attr(\"href\")||\"\";const m=href.match(/^\\/video\\/(\\d+)\\.html$/);if(m){const title=$a.attr(\"title\")||$a.text().trim();if(title&&items.length<40){const id=m[1];const img=$a.find(\"img\").first();const cover=img.attr(\"data-original\")||img.attr(\"data-src\")||img.attr(\"src\")||\"\";if(!items.some(x=>x.id===\"/video/\"+id+\"/\"))items.push({id:\"/video/\"+id+\"/\",title,cover,remark:\"AI漫剧\"})}}});if(isHome){return{type:\"complex\",data:[{type:\"card\",title:\"AI漫剧\",videos:items}]}}return items;",
+        "detail": "let id=env.get(\"movieId\");if(!id)return{};const m=String(id).match(/(\\d+)/);if(m)id=m[1];const html=await(0,utils_1.req)(env.baseUrl+\"/video/\"+id+\".html\");const $=utils_1.kitty.load(html);let desc=\"\";const dm=$(\"meta[name=description]\").attr(\"content\")||\"\";desc=dm.replace(/^《[^》]*》免费高清版[^AI]*AI漫剧动漫,.*?就在星辰影院[^.]*\\./,\"\").replace(/^.*?免费播放完整版/,\"\").trim();let cover=$(\"img\").map(function(){const src=$(this).attr(\"src\")||\"\";if(src.includes(\"uploads\")||src.includes(\"vod\")||src.includes(\"cover\"))return src;return null}).get().find(x=>x)||\"\";let title=$(\"h1\").text().trim().replace(/^(漫剧|动漫|短剧)?《/,\"\").replace(/》.*$/,\"\");if(!title){const tm=$(\"meta[property=og:title]\").attr(\"content\")||\"\";title=tm.replace(/^(漫剧|动漫)/,\"\")}const eps=[];$(\"a\").each(function(){const $a=$(this);const href=$a.attr(\"href\")||\"\";const em=href.match(/^\\/play\\/(\\d+)\\/(\\d+)\\/(\\d+)\\.html$/);if(em&&em[1]===String(id)){const text=$a.text().trim();if(text)eps.push({text,id:env.baseUrl+\"/play/\"+em[1]+\"/\"+em[2]+\"/\"+em[3]+\".html\"})}});return{id:\"/video/\"+id+\"/\",title,cover,desc,remark:\"AI漫剧\",playlist:[{title:\"全集\",videos:eps}]};",
+        "search": "const wd=env.get(\"keyword\");if(!wd)return[];const html=await(0,utils_1.req)(env.baseUrl+\"/search.php?keyword=\"+encodeURIComponent(wd));const $=utils_1.kitty.load(html);const items=[];$(\"a\").each(function(){const $a=$(this);const href=$a.attr(\"href\")||\"\";const m=href.match(/^\\/video\\/(\\d+)\\.html$/);if(m){const title=$a.attr(\"title\")||$a.text().trim();if(title&&items.length<20){const id=m[1];const img=$a.find(\"img\").first();const cover=img.attr(\"data-original\")||img.attr(\"data-src\")||img.attr(\"src\")||\"\";if(!items.some(x=>x.id===\"/video/\"+id+\"/\"))items.push({id:\"/video/\"+id+\"/\",title,cover,remark:\"\"})}}});return items;"
+      }
+    }
+  }
+]
