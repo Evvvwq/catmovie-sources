@@ -3,7 +3,7 @@
     "id": "dm91-aimanju",
     "name": "91动漫·AI漫剧",
     "api": "https://91dongman.net",
-    "nsfw": true,
+    "nsfw": false,
     "desc": "91动漫 AI漫剧 (v7 全局req+m3u8直链)",
     "type": 1,
     "extra": {
