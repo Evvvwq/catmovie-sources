@@ -1,0 +1,22 @@
+[
+  {
+    "id": "test-static-a",
+    "name": "测试A·静态",
+    "api": "https://example.com",
+    "nsfw": false,
+    "type": 1,
+    "extra": {
+      "js": {
+        "category": [
+          {
+            "text": "测试分类",
+            "id": "1"
+          }
+        ],
+        "home": "return [\n  { \"id\": \"/v/1.html\", \"title\": \"测试影片一号\", \"cover\": \"\", \"remark\": \"测试\" },\n  { \"id\": \"/v/2.html\", \"title\": \"测试影片二号\", \"cover\": \"\", \"remark\": \"测试\" },\n  { \"id\": \"/v/3.html\", \"title\": \"测试影片三号\", \"cover\": \"\", \"remark\": \"测试\" }\n]",
+        "detail": "return { id: \"/v/1.html\", title: \"测试影片一号\", desc: \"测试详情\", playlist: [{ title: \"线路1\", videos: [{ text: \"第1集\", id: \"https://example.com/1.mp4\" }] }] }",
+        "search": "return [\n  { \"id\": \"/v/1.html\", \"title\": \"搜索测试影片\", \"cover\": \"\", \"remark\": \"\" }\n]"
+      }
+    }
+  }
+]
