@@ -1,0 +1,154 @@
+[
+  {
+    "id": "motiongoo-aimanju",
+    "name": "苍穹影视·AI漫剧",
+    "api": "https://www.motiongoo.com",
+    "nsfw": false,
+    "desc": "苍穹影视 按原站分类 (含AI漫剧)",
+    "type": 1,
+    "extra": {
+      "gfw": false,
+      "searchLimit": 20,
+      "js": {
+        "category": [
+          {
+            "text": "AI漫剧",
+            "id": "47"
+          },
+          {
+            "text": "剧情片",
+            "id": "6"
+          },
+          {
+            "text": "动作片",
+            "id": "7"
+          },
+          {
+            "text": "冒险片",
+            "id": "8"
+          },
+          {
+            "text": "喜剧片",
+            "id": "9"
+          },
+          {
+            "text": "奇幻片",
+            "id": "10"
+          },
+          {
+            "text": "恐怖片",
+            "id": "11"
+          },
+          {
+            "text": "悬疑片",
+            "id": "16"
+          },
+          {
+            "text": "惊悚片",
+            "id": "17"
+          },
+          {
+            "text": "国产剧",
+            "id": "12"
+          },
+          {
+            "text": "港剧",
+            "id": "13"
+          },
+          {
+            "text": "韩剧",
+            "id": "14"
+          },
+          {
+            "text": "日剧",
+            "id": "15"
+          },
+          {
+            "text": "泰剧",
+            "id": "23"
+          },
+          {
+            "text": "台剧",
+            "id": "24"
+          },
+          {
+            "text": "欧美剧",
+            "id": "25"
+          },
+          {
+            "text": "新马剧",
+            "id": "26"
+          },
+          {
+            "text": "总裁短剧",
+            "id": "41"
+          },
+          {
+            "text": "神豪短剧",
+            "id": "42"
+          },
+          {
+            "text": "穿越重生短剧",
+            "id": "43"
+          },
+          {
+            "text": "都市短剧",
+            "id": "44"
+          },
+          {
+            "text": "年代短剧",
+            "id": "45"
+          },
+          {
+            "text": "长篇剧场",
+            "id": "46"
+          },
+          {
+            "text": "国产动漫",
+            "id": "36"
+          },
+          {
+            "text": "日本动漫",
+            "id": "37"
+          },
+          {
+            "text": "韩国动漫",
+            "id": "38"
+          },
+          {
+            "text": "欧美动漫",
+            "id": "39"
+          },
+          {
+            "text": "港台动漫",
+            "id": "40"
+          },
+          {
+            "text": "国产综艺",
+            "id": "30"
+          },
+          {
+            "text": "港台综艺",
+            "id": "31"
+          },
+          {
+            "text": "韩国综艺",
+            "id": "32"
+          },
+          {
+            "text": "日本综艺",
+            "id": "33"
+          },
+          {
+            "text": "欧美综艺",
+            "id": "35"
+          }
+        ],
+        "home": "const cate = env.get(\"category\", \"\");const page = Number(env.get(\"page\", 1) || 1);const base = env.baseUrl;\nlet listUrl;\nif (!cate || cate === \"/\") { listUrl = base + \"/tv/47.html\"; }\nelse if (page <= 1) { listUrl = base + \"/tv/\" + cate + \".html\"; }\nelse { listUrl = base + \"/tv/\" + cate + \"/page/\" + page + \".html\"; }\nconst html = await req(listUrl);const $ = kitty.load(html);const items = [];\n$(\"a.cover-img\").each(function () {const $a = $(this);const href = $a.attr(\"href\") || \"\";const m = href.match(/\\/video\\/(\\d+)\\.html/);if (m && items.length < 40) {const id = m[1];const title = $a.attr(\"title\") || \"\";const img = $a.find(\"img\").first();const cover = img.attr(\"data-original\") || img.attr(\"data-src\") || img.attr(\"src\") || \"\";const key = \"/video/\" + id + \"/\";if (title && !items.some(x => x.id === key)) {let remark = \"\";const tag = $a.find(\".pic-tag\").first().text().trim();if (tag) remark = tag;items.push({ id: key, title, cover, remark });}}});\nif (!cate || cate === \"/\") {return { type: \"complex\", data: [{ type: \"card\", title: \"AI漫剧\", videos: items }] };}\nreturn items;",
+        "detail": "let id = env.get(\"movieId\", \"\");if (!id) return { id: \"\", title: \"\", cover: \"\", playlist: [] };const m = String(id).match(/(\\d+)/);if (m) id = m[1];const html = await req(env.baseUrl + \"/video/\" + id + \".html\");const $ = kitty.load(html);let title = $(\"h1\").text().trim();if (!title) title = ($(\"meta[property=og:title]\").attr(\"content\") || \"\").replace(/^《/, \"\").replace(/》.*$/, \"\");let cover = \"\";$(\"img\").each(function () {const src = $(this).attr(\"data-original\") || \"\";if (!cover && /(upload|uploads|vod)/.test(src)) cover = src;});let desc = $(\".content\").text().trim() || $(\"meta[name=description]\").attr(\"content\") || \"\";desc = desc.replace(/\\s+/g, \" \").slice(0, 300);const eps = [];$(\"a\").each(function () {const $a = $(this);const href = $a.attr(\"href\") || \"\";const em = href.match(/^\\/play\\/(\\d+)\\/(\\d+)\\/(\\d+)\\.html$/);if (em && em[1] === String(id)) {const text = $a.text().trim();if (text && text.length < 20) eps.push({ text, id: env.baseUrl + \"/play/\" + em[1] + \"/\" + em[2] + \"/\" + em[3] + \".html\" });}});const unique = [];eps.forEach(e => { if (!unique.some(x => x.id === e.id)) unique.push(e); });return { id: \"/video/\" + id + \"/\", title, cover, desc, remark: \"漫剧\", playlist: [{ title: \"播放线路\", videos: unique }] };",
+        "search": "const wd = env.get(\"keyword\", \"\");if (!wd) return [];const html = await req(env.baseUrl + \"/search/\" + encodeURIComponent(wd) + \".html\");const $ = kitty.load(html);const items = [];$(\"a.cover-img\").each(function () {const $a = $(this);const href = $a.attr(\"href\") || \"\";const m = href.match(/\\/video\\/(\\d+)\\.html/);if (m && items.length < 20) {const id = m[1];const title = $a.attr(\"title\") || \"\";const img = $a.find(\"img\").first();const cover = img.attr(\"data-original\") || img.attr(\"data-src\") || img.attr(\"src\") || \"\";const key = \"/video/\" + id + \"/\";if (title && !items.some(x => x.id === key)) items.push({ id: key, title, cover, remark: \"\" });}});return items;",
+        "parseIframe": "const iframe = env.get(\"iframe\", \"\");if (!iframe) return \"\";const html = await req(iframe);const m = html.match(/player_aaaa\\s*=\\s*(\\{[\\s\\S]*?\\})\\s*;?\\s*<\\/script>/);if (m) {try {const cfg = JSON.parse(m[1]);if (cfg.url) return String(cfg.url).replace(/\\\\\\//g, \"/\");} catch (e) {}}const m2 = html.match(/\"url\"\\s*:\\s*\"([^\"]+\\.m3u8[^\"]*)\"/);if (m2) return m2[1].replace(/\\\\\\//g, \"/\");return \"\";"
+      }
+    }
+  }
+]
